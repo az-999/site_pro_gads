@@ -66,6 +66,8 @@ $config = [
                 'export' => 'export/index',
                 'export/download' => 'export/download',
                 'pipeline/run' => 'pipeline/run',
+                'reset' => 'reset/index',
+                'reset/run' => 'reset/run',
             ],
         ],
     ],

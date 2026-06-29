@@ -38,6 +38,7 @@ AppAsset::register($this);
         ['label' => 'Настройки', 'url' => ['/settings/index']],
         ['label' => 'Превью', 'url' => ['/preview/index']],
         ['label' => 'Экспорт', 'url' => ['/export/index']],
+        ['label' => 'Сброс', 'url' => ['/reset/index']],
     ],
 ]) ?>
 <?= Nav::widget([
