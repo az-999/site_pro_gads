@@ -3,7 +3,7 @@ services:
     build: ./yii2
     container_name: site_pro_gads_app
     ports:
-      - "5002:80"
+      - "6003:80"
     volumes:
       - ./yii2:/var/www/html
     depends_on:

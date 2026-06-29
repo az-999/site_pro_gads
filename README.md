@@ -15,8 +15,8 @@ docker compose exec yii2 php yii migrate --interactive=0
 
 | Сервис | URL |
 |--------|-----|
-| **Админка** | http://localhost:5002/ |
-| **Вход** | http://localhost:5002/login |
+| **Админка** | http://localhost:6003/ |
+| **Вход** | http://localhost:6003/login |
 | **phpMyAdmin** | http://localhost:5009 |
 | **MySQL** | `localhost:5006` (user: `app`, password: `app`, db: `site_pro_gads`) |
 | **Memcached** | `localhost:5001` |
@@ -25,7 +25,7 @@ docker compose exec yii2 php yii migrate --interactive=0
 
 ## Test plan
 
-1. Откройте http://localhost:5002/login и войдите.
+1. Откройте http://localhost:6003/login и войдите.
 2. Перейдите в **Импорт**, выберите тип источника и загрузите файлы из `yii2/data/samples/` (CSV или JSON).
 3. На **Дашборде** нажмите **Обработать всё** — запустится очистка и подготовка.
 4. Откройте **Ключевые слова** — проверьте фильтры по статусу и причине отклонения (`junk`, `brand`, `duplicate`, `low_volume`).
