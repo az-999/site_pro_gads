@@ -6,9 +6,18 @@
 
 1. DNS: A-запись `sitepro.avatars-meta.com` → IP сервера.
 
-2. Сертификаты — см. [ssl/README.md](ssl/README.md).
+2. **SSL через acme.sh** — файлы в `nginx/ssl/` (`fullchain.cer`, `sitepro.avatars-meta.com.key`). См. [ssl/README.md](ssl/README.md).
 
-3. Подключить конфиг (путь к проекту замените при необходимости):
+   Обновление / установка в эту папку:
+   ```bash
+   ~/.acme.sh/acme.sh --install-cert -d sitepro.avatars-meta.com \
+     --cert-file       /opt/site_pro_gads/nginx/ssl/sitepro.avatars-meta.com.cer \
+     --key-file        /opt/site_pro_gads/nginx/ssl/sitepro.avatars-meta.com.key \
+     --fullchain-file  /opt/site_pro_gads/nginx/ssl/fullchain.cer \
+     --reloadcmd       "nginx -t && systemctl reload nginx"
+   ```
+
+3. Подключить конфиг:
 
 ```bash
 sudo ln -sf /opt/site_pro_gads/nginx/sitepro.avatars-meta.com.conf \
@@ -18,7 +27,7 @@ sudo nginx -t
 sudo systemctl reload nginx
 ```
 
-4. Убедитесь, что контейнер слушает порт 6003:
+4. Docker на порту 6003:
 
 ```bash
 cd /opt/site_pro_gads && docker compose ps
@@ -31,21 +40,14 @@ curl -I http://127.0.0.1:6003/login
 
 ```
 nginx/
-├── sitepro.avatars-meta.com.conf   # конфиг виртуального хоста
-├── ssl/
-│   └── sitepro.avatars-meta.com/
-│       ├── fullchain.pem
-│       └── privkey.pem
+├── sitepro.avatars-meta.com.conf
+├── ssl/                              ← fullchain.cer, *.key (acme.sh)
 └── README.md
 ```
 
 ## Пути в конфиге
 
-Если проект лежит не в `/opt/site_pro_gads`, замените пути к `ssl_certificate` в `.conf` на актуальные.
-
-Если используете certbot без копирования, можно указать:
-
 ```nginx
-ssl_certificate     /etc/letsencrypt/live/sitepro.avatars-meta.com/fullchain.pem;
-ssl_certificate_key /etc/letsencrypt/live/sitepro.avatars-meta.com/privkey.pem;
+ssl_certificate     /opt/site_pro_gads/nginx/ssl/fullchain.cer;
+ssl_certificate_key /opt/site_pro_gads/nginx/ssl/sitepro.avatars-meta.com.key;
 ```

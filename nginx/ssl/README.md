@@ -1,44 +1,47 @@
-# SSL-сертификаты
+# SSL-сертификаты (acme.sh)
 
-Положите файлы в каталог `sitepro.avatars-meta.com/`:
+После выпуска acme.sh кладёт файлы прямо в `nginx/ssl/`:
 
 ```
-nginx/ssl/sitepro.avatars-meta.com/
-├── fullchain.pem   # сертификат + цепочка CA
-└── privkey.pem     # приватный ключ
+nginx/ssl/
+├── fullchain.cer                      ← ssl_certificate в nginx
+├── sitepro.avatars-meta.com.key       ← ssl_certificate_key в nginx
+├── sitepro.avatars-meta.com.cer
+├── ca.cer
+├── sitepro.avatars-meta.com.csr
+└── sitepro.avatars-meta.com.conf      ← конфиг acme.sh (не nginx!)
 ```
 
-Файлы **не коммитятся** в git (см. `.gitignore`).
+Все `*.cer`, `*.key`, `*.csr` — **не коммитятся** в git.
 
-## Вариант 1: Let's Encrypt (certbot)
+## Пути в nginx
 
-На сервере, до включения HTTPS в nginx:
+```nginx
+ssl_certificate     /opt/site_pro_gads/nginx/ssl/fullchain.cer;
+ssl_certificate_key /opt/site_pro_gads/nginx/ssl/sitepro.avatars-meta.com.key;
+```
+
+## Выпуск / обновление
 
 ```bash
-sudo mkdir -p /var/www/certbot
-sudo apt install certbot
+cd /opt/site_pro_gads/nginx/ssl
 
-# Временно используйте только HTTP-блок из конфига (порт 80 для ACME)
-sudo certbot certonly --webroot \
-  -w /var/www/certbot \
-  -d sitepro.avatars-meta.com \
-  --email YOUR@EMAIL.com \
-  --agree-tos
+# первый выпуск
+~/.acme.sh/acme.sh --issue -d sitepro.avatars-meta.com --nginx
+
+# или webroot
+~/.acme.sh/acme.sh --issue -d sitepro.avatars-meta.com -w /var/www/acme
+
+# установить/обновить в эту папку + reload nginx
+~/.acme.sh/acme.sh --install-cert -d sitepro.avatars-meta.com \
+  --cert-file       /opt/site_pro_gads/nginx/ssl/sitepro.avatars-meta.com.cer \
+  --key-file        /opt/site_pro_gads/nginx/ssl/sitepro.avatars-meta.com.key \
+  --fullchain-file  /opt/site_pro_gads/nginx/ssl/fullchain.cer \
+  --reloadcmd       "nginx -t && systemctl reload nginx"
 ```
 
-Скопируйте сертификаты в проект:
-
+Проверка:
 ```bash
-sudo cp /etc/letsencrypt/live/sitepro.avatars-meta.com/fullchain.pem \
-  /opt/site_pro_gads/nginx/ssl/sitepro.avatars-meta.com/
-sudo cp /etc/letsencrypt/live/sitepro.avatars-meta.com/privkey.pem \
-  /opt/site_pro_gads/nginx/ssl/sitepro.avatars-meta.com/
-sudo chmod 640 /opt/site_pro_gads/nginx/ssl/sitepro.avatars-meta.com/*.pem
-sudo chown root:www-data /opt/site_pro_gads/nginx/ssl/sitepro.avatars-meta.com/*.pem
+sudo nginx -t && sudo systemctl reload nginx
+curl -I https://sitepro.avatars-meta.com/login
 ```
-
-Или укажите в nginx пути напрямую на `/etc/letsencrypt/live/...` (без копирования).
-
-## Вариант 2: Свои сертификаты
-
-Скопируйте выданные CA файлы как `fullchain.pem` и `privkey.pem` в каталог выше.

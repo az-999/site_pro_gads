@@ -1,4 +1,9 @@
-*
+# Сертификаты acme.sh — не коммитить
+*.cer
+*.key
+*.csr
+*.csr.conf
+sitepro.avatars-meta.com.conf
+
 !.gitignore
 !README.md
-!sitepro.avatars-meta.com/.gitkeep
