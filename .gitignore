@@ -1,4 +1,6 @@
 .env
+deploy_key
+deploy_key.pub
 yii2/vendor/
 yii2/runtime/*
 !yii2/runtime/.gitignore

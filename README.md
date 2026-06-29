@@ -15,8 +15,8 @@ docker compose exec yii2 php yii migrate --interactive=0
 
 | Сервис | URL |
 |--------|-----|
-| **Админка** | http://localhost:6003/ |
-| **Вход** | http://localhost:6003/login |
+| **Админка** | https://sitepro.avatars-meta.com/ (prod) / http://localhost:6003/ (локально) |
+| **Вход** | https://sitepro.avatars-meta.com/login |
 | **phpMyAdmin** | http://localhost:5009 |
 | **MySQL** | `localhost:5006` (user: `app`, password: `app`, db: `site_pro_gads`) |
 | **Memcached** | `localhost:5001` |
@@ -127,4 +127,10 @@ ssh -i deploy_key -p 22 USER@HOST "echo ok"
 ```
 
 После push в `main` workflow выполнит `docker compose up -d --build` и миграции.
+
+## Nginx + HTTPS (production)
+
+Конфиг: [nginx/sitepro.avatars-meta.com.conf](nginx/sitepro.avatars-meta.com.conf)  
+Сертификаты: [nginx/ssl/sitepro.avatars-meta.com/](nginx/ssl/sitepro.avatars-meta.com/)  
+Инструкция: [nginx/README.md](nginx/README.md)
 
