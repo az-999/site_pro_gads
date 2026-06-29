@@ -13,8 +13,10 @@ $uploadUrl = \yii\helpers\Url::to(['/import/upload']);
 
 <div class="card mb-4">
     <div class="card-body">
-        <form id="import-form">
-            <?= Html::hiddenInput(Yii::$app->request->csrfParam, Yii::$app->request->csrfToken) ?>
+        <form id="import-form"
+              data-upload-url="<?= Html::encode($uploadUrl) ?>"
+              data-csrf-name="<?= Html::encode(Yii::$app->request->csrfParam) ?>"
+              data-csrf-token="<?= Html::encode(Yii::$app->request->csrfToken) ?>">
             <div class="mb-3">
                 <label class="form-label" for="source_type">Тип источника</label>
                 <select name="source_type" id="source_type" class="form-select" required>
@@ -26,6 +28,7 @@ $uploadUrl = \yii\helpers\Url::to(['/import/upload']);
 
             <div id="dropzone" class="mb-3">
                 <p class="mb-2">Перетащите CSV или JSON сюда</p>
+                <p class="text-muted small mb-2">После выбора файла загрузка начнётся автоматически</p>
                 <button type="button" id="upload-btn" class="btn btn-primary">Выбрать файл</button>
             </div>
 
@@ -67,7 +70,3 @@ $uploadUrl = \yii\helpers\Url::to(['/import/upload']);
         </table>
     </div>
 </div>
-
-<?php
-$this->registerJs("window.UPLOAD_URL = " . json_encode($uploadUrl) . ";", \yii\web\View::POS_HEAD);
-?>

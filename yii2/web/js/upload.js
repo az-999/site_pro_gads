@@ -1,20 +1,37 @@
 document.addEventListener('DOMContentLoaded', function () {
-    if (typeof ss === 'undefined' || !window.UPLOAD_URL) {
+    var form = document.getElementById('import-form');
+    if (!form || typeof ss === 'undefined') {
+        console.error('Import upload: SimpleAjaxUploader не загружен');
+        return;
+    }
+
+    var uploadUrl = form.getAttribute('data-upload-url');
+    if (!uploadUrl) {
+        console.error('Import upload: URL не задан');
         return;
     }
 
     var progressBox = document.getElementById('progressBox');
+    var csrfName = form.getAttribute('data-csrf-name');
+    var csrfToken = form.getAttribute('data-csrf-token');
 
     var uploader = new ss.SimpleUpload({
         button: 'upload-btn',
         dropzone: 'dropzone',
-        url: window.UPLOAD_URL,
+        url: uploadUrl,
         name: 'uploadfile',
         responseType: 'json',
         multiple: true,
         allowedExtensions: ['csv', 'json'],
-        form: document.getElementById('import-form'),
         onSubmit: function (filename) {
+            var data = {
+                source_type: document.getElementById('source_type').value
+            };
+            if (csrfName && csrfToken) {
+                data[csrfName] = csrfToken;
+            }
+            this.setData(data);
+
             var wrapper = document.createElement('div');
             var fileSize = document.createElement('div');
             var progress = document.createElement('div');
@@ -46,6 +63,12 @@ document.addEventListener('DOMContentLoaded', function () {
             alertEl.textContent = filename + ' — импортировано ' + response.rows + ' строк.';
             progressBox.appendChild(alertEl);
             setTimeout(function () { window.location.reload(); }, 1500);
+        },
+        onExtError: function (filename, extension) {
+            alert('Недопустимый формат: .' + extension + '. Нужен CSV или JSON.');
+        },
+        onError: function (filename, type, status, statusText, response) {
+            alert('Ошибка загрузки ' + filename + ': ' + (statusText || type));
         }
     });
 });
