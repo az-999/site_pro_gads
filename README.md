@@ -127,3 +127,4 @@ ssh -i deploy_key -p 22 USER@HOST "echo ok"
 ```
 
 После push в `main` workflow выполнит `docker compose up -d --build` и миграции.
+
